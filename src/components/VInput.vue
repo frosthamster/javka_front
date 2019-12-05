@@ -32,7 +32,8 @@
         },
         methods: {
             onInput(event) {
-                const value = event.target.value;
+                const target = event.target;
+                const value = target.type === 'file' ? target.files : target.value;
 
                 this.isValid = this.validator(value);
                 this.$emit('input', value);

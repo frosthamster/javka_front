@@ -1,7 +1,5 @@
 <template>
-    <VComponentSwitcher
-        :components-info="componentsInfo"
-    />
+    <VComponentSwitcher :components-info="componentsInfo"/>
 </template>
 
 <script>
@@ -37,5 +35,4 @@
 </script>
 
 <style scoped>
-
 </style>

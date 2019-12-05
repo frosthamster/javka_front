@@ -5,13 +5,51 @@ import {errHandler} from "../js/utils";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+function mapToObjects(iterable, schema) {
+    return iterable.map(obj => {
+        if (schema.length !== obj.length)
+            throw new Error(`schema is not valid for ${obj}`);
+
+        let result = {};
+        for(let [k, v] of  schema.map((e, i) => [e, obj[i]]))
+            result[k] = v;
+
+        return result;
+    })
+}
+
+function mapToFiles(iterable) {
+    return mapToObjects(iterable, [
+        'id', 'name', 'creator', 'parentid', 'description', 'path'
+    ]);
+}
+
+function mapToGroups(iterable) {
+    return mapToObjects(iterable, [
+        'id', 'name', 'creator'
+    ]);
+}
+
+export function loadFiles(id) {
+    let url = 'files/getAvailableFiles';
+    let params = {session: store.state.session};
+    if (id) {
+        url = 'files/getDirectoryContent';
+        params['directoryId'] = id;
+    }
+
+    return axios.get(url, {params: params})
+    .then(r => mapToFiles(r.data))
+    .catch(errHandler)
+}
+
+const store = new Vuex.Store({
     strict: process.env.NODE_ENV === 'development',
     state: {
-        session: null,
+        session: null, //'87dd145f7ee1bc52dca8ef722de342e497836c893c6342ea1981944c193d7055',
         users: null,
         groups: null,
-        root: null,
+        currentUser: null,
     },
     mutations: {
         setSession: function (state, p) {
@@ -20,8 +58,8 @@ export default new Vuex.Store({
         setUsers: function (state, p) {
             state.users = p;
         },
-        setRoot: function (state, p) {
-            state.root = p;
+        setCurrentUser: function(state, p) {
+            state.currentUser = p;
         },
         setGroups: function (state, p) {
             state.groups = p;
@@ -33,17 +71,24 @@ export default new Vuex.Store({
             .then(r => commit('setUsers', r.data))
             .catch(errHandler)
         },
-        loadGroups: function ({commit, state}) {
-            axios.get('groups', {params: {session: state.session}})
-            .then(r => commit('setGroups', r.data))
+        loadCurrentUser: function({commit, state}) {
+            axios.get('users/current', {params: {session: state.session}})
+            .then(r => commit('setCurrentUser', r.data))
             .catch(errHandler)
         },
-        createGroup: function ({commit, state}, data) {
+        loadGroups: function ({commit, state}) {
+            axios.get('groups', {params: {session: state.session}})
+            .then(r => commit('setGroups', mapToGroups(r.data)))
+            .catch(errHandler)
+        },
+        createGroup: function ({dispatch, state}, data) {
             axios.post('groups/create',{}, {
                 params: {session: state.session, ...data}
             })
-            .then(() => commit('setGroups', null))
+            .then(() => dispatch('loadGroups'))
             .catch(errHandler)
         }
     }
 });
+
+export default store;

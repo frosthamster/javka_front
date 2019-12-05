@@ -11,9 +11,10 @@
             >{{ cInfo.text }}
             </button>
         </div>
-        <keep-alive>
+        <keep-alive v-if="keep_alive">
             <component :is="currentComponent"/>
         </keep-alive>
+        <component v-else :is="currentComponent"/>
     </div>
 </template>
 
@@ -22,6 +23,12 @@
         name: 'VComponentSwitcher',
         props: {
             componentsInfo: Array,
+            keep_alive: {
+                type: Boolean,
+                default: function () {
+                    return true;
+                }
+            },
             buttonStyle: {
                 type: Object,
                 default: function () {

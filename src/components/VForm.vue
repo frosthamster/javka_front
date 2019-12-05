@@ -8,6 +8,7 @@
             :key="field.name"
             :placeholder="field.placeholder"
             :label="field.label"
+            :type="field.type ? field.type : 'text'"
             :validator="field.validator"
             :value="$data[field.name]"
             @input="$data[field.name] = $event"
