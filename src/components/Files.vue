@@ -74,7 +74,7 @@
                     :handler="this.shareWithUser"
                     :fields="[
                         {
-                            name: 'userId',
+                            name: 'otherUserId',
                             validator: (e) => /^\d+$/.test(e),
                             placeholder: '',
                             label: 'id пользователя',
