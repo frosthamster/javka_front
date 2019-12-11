@@ -14,10 +14,14 @@
                         v-for="folderData of elements.filter(e => !e.path)"
                         :on-click="() => loadSubFolder(folderData)"
                         :key="folderData.id"
-                    >Папка: {{folderData.name}}</VButton>
+                    >Папка id="{{folderData.id}}": {{folderData.name}}</VButton>
                     <hr>
                     <div>Файлы:</div>
-                    <VFile v-for="fileData of elements.filter(e => e.path)" :data="fileData" :key="fileData.id"/>
+                    <VFile
+                        v-for="fileData of elements.filter(e => e.path)"
+                        :data="fileData"
+                        :key="fileData.id"
+                    />
                     <hr>
                 </div>
             </div>
@@ -146,7 +150,7 @@
                     params: {
                         session: this.$store.state.session,
                         name: data.name,
-                        parentId: this.currentData.id ? this.currentData.id : -1,
+                        parentId: this.currentFolderId,
                     }
                 })
                 .then(this.reloadData)
@@ -163,6 +167,7 @@
                         session: this.$store.state.session,
                         name: data.name,
                         description: data.description,
+                        parentId: this.currentFolderId,
                     }
                 })
                 .then(this.reloadData)
@@ -194,6 +199,9 @@
         computed: {
             isRoot: function () {
                 return this.currentData.parentData === null;
+            },
+            currentFolderId: function () {
+                return this.currentData.id ? this.currentData.id : -1;
             }
         },
         beforeMount: function () {
