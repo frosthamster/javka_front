@@ -61,10 +61,10 @@
                         : this[field.name];
                 }
 
+                this.handler(data);
+
                 for (let vInput of this.$refs.vInputs)
                     vInput.$refs.input.value = '';
-
-                this.handler(data);
             }
         }
     }
