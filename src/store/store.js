@@ -27,6 +27,7 @@ export function loadFiles(id) {
     }
 
     return axios.get(url, {params: params})
+    .then(r => r.data)
     .catch(errHandler)
 }
 

@@ -5,6 +5,7 @@
         </h5>
         <VInput
             v-for="field of fields"
+            ref="vInputs"
             :key="field.name"
             :placeholder="field.placeholder"
             :label="field.label"
@@ -59,6 +60,9 @@
                         ? field.parser(this[field.name])
                         : this[field.name];
                 }
+
+                for (let vInput of this.$refs.vInputs)
+                    vInput.$refs.input.value = '';
 
                 this.handler(data);
             }

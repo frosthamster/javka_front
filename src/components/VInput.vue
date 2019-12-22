@@ -3,6 +3,7 @@
         <span v-if="label" class="label">{{ label }}</span>
         <input
             v-bind="$attrs"
+            ref="input"
             v-on:input="onInput($event)"
             :class="{valid: isValid}"
         >
