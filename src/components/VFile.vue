@@ -19,7 +19,7 @@
         },
         computed: {
             downloadLink: function () {
-                return `${BASE_URL}files/download?fileId=${this.data.id}`
+                return `${BASE_URL}files/download?fileId=${this.data.id}&session=${this.$store.state.session}`
             }
         }
     }

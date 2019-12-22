@@ -18,18 +18,6 @@ function mapToObjects(iterable, schema) {
     })
 }
 
-function mapToFiles(iterable) {
-    return mapToObjects(iterable, [
-        'id', 'name', 'creator', 'parentid', 'description', 'path'
-    ]);
-}
-
-function mapToGroups(iterable) {
-    return mapToObjects(iterable, [
-        'id', 'name', 'creator'
-    ]);
-}
-
 export function loadFiles(id) {
     let url = 'files/getAvailableFiles';
     let params = {session: store.state.session};
@@ -39,7 +27,6 @@ export function loadFiles(id) {
     }
 
     return axios.get(url, {params: params})
-    .then(r => mapToFiles(r.data))
     .catch(errHandler)
 }
 
@@ -78,7 +65,7 @@ const store = new Vuex.Store({
         },
         loadGroups: function ({commit, state}) {
             axios.get('groups', {params: {session: state.session}})
-            .then(r => commit('setGroups', mapToGroups(r.data)))
+            .then(r => commit('setGroups', r.data))
             .catch(errHandler)
         },
         createGroup: function ({dispatch, state}, data) {
