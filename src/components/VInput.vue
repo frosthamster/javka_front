@@ -3,7 +3,6 @@
         <span v-if="label" class="label">{{ label }}</span>
         <input
             v-bind="$attrs"
-            v-bind:value="value"
             v-on:input="onInput($event)"
             :class="{valid: isValid}"
         >
@@ -20,7 +19,6 @@
             }
         },
         props: {
-            value: String,
             label: {
                 type: String,
                 default: null

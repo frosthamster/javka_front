@@ -46,7 +46,7 @@ export function loadFiles(id) {
 const store = new Vuex.Store({
     strict: process.env.NODE_ENV === 'development',
     state: {
-        session: null, //'87dd145f7ee1bc52dca8ef722de342e497836c893c6342ea1981944c193d7055',
+        session: null,
         users: null,
         groups: null,
         currentUser: null,
