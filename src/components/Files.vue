@@ -9,12 +9,13 @@
                 <div v-else>
                     <hr>
                     <div>Папки:</div>
-                    <VButton
-                        class="folder_bt"
-                        v-for="folderData of elements.filter(e => !e.path)"
-                        :on-click="() => loadSubFolder(folderData)"
-                        :key="folderData.id"
-                    >Папка id="{{folderData.id}}": {{folderData.name}}</VButton>
+                    <div class="folder" v-for="folderData of elements.filter(e => !e.path)">
+                        <div>{{folderData.name}} id: {{folderData.id}}</div>
+                        <VButton
+                            :on-click="() => loadSubFolder(folderData)"
+                            :key="folderData.id"
+                        >открыть</VButton>
+                    </div>
                     <hr>
                     <div>Файлы:</div>
                     <VFile
@@ -81,7 +82,7 @@
                         },
                         {
                             name: 'fileId',
-                            validator: (e) => /^\d+$/.test(e),
+                            validator: (e) => e.length > 0,
                             placeholder: '',
                             label: 'id файла/папки',
                         },
@@ -100,7 +101,7 @@
                         },
                         {
                             name: 'fileId',
-                            validator: (e) => /^\d+$/.test(e),
+                            validator: (e) => e.length > 0,
                             placeholder: '',
                             label: 'id файла/папки',
                         },
@@ -146,29 +147,33 @@
                 this.reloadData();
             },
             createSubFolder: function (data) {
-                axios.post('files/createFolder', {}, {
-                    params: {
-                        session: this.$store.state.session,
-                        name: data.name,
-                        parentId: this.currentFolderId,
-                    }
-                })
+                let params = {
+                    session: this.$store.state.session,
+                    name: data.name,
+                };
+
+                if (this.currentData.id)
+                    params.parent = this.currentData.id;
+
+                axios.post('files/createFolder', {}, {params: params})
                 .then(this.reloadData)
                 .catch(errHandler)
             },
             uploadFile: function(data) {
                 let formData = new FormData();
                 formData.append('file', data.files[0]);
+                let params = {
+                    session: this.$store.state.session,
+                    name: data.name,
+                    description: data.description,
+                };
+
+                if (this.currentData.id)
+                    params.parent = this.currentData.id;
+
                 axios.post('files/upload', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    },
-                    params: {
-                        session: this.$store.state.session,
-                        name: data.name,
-                        description: data.description,
-                        parentId: this.currentFolderId,
-                    }
+                    headers: {'Content-Type': 'multipart/form-data'},
+                    params: params
                 })
                 .then(this.reloadData)
                 .catch(errHandler)
@@ -200,9 +205,6 @@
             isRoot: function () {
                 return this.currentData.parentData === null;
             },
-            currentFolderId: function () {
-                return this.currentData.id ? this.currentData.id : -1;
-            }
         },
         beforeMount: function () {
             this.reloadData();
@@ -221,7 +223,10 @@
         margin-right: 40px;
     }
 
-    .folder_bt {
-        display: block;
+    .folder {
+        border: solid 1px #000;
+        padding: 15px;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 </style>
